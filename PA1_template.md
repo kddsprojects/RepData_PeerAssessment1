@@ -255,7 +255,7 @@ case, however.
 The code below: 
 
 - creates a new factor variable in the data set with two levels corresponding to
-whether a given day is a weekday or a weekend,
+whether a given day is a weekday or a weekend,  
 - generates a panel plot containing two time series plots of the average total 
 number of steps across intervals; each time series plot corresponding to
 weekend or weekday data respectively. 
