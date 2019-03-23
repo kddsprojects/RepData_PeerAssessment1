@@ -233,7 +233,19 @@ xyplot(meansteps ~ interval | daytype, data = meanbydayintsteps, layout =c(1,2),
 
 <br/>
   
-Of course, notwithstanding
+Examining the time series plots, we can see that, amongst other things:  
+
+-  there appears to be somewhat greater variability in step totals across intervals 
+during the weekend,  
+-  the step totals for weekdays are around zero for a shorter duration in the 
+starting intervals, indicating an earlier wake-up time (perhaps due to a job),  
+-  the step totals for the later intervals decrease and level off slightly earlier 
+for the weekdays, indicating a slightly earlier bedtime,  
+-  the peak average step total occurs roughly around the same interval for both 
+weekdays and the weekend.  
+<br/>
+<br/>
+<br/>
 
 [1]: https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip "activity.zip"
 
