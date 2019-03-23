@@ -26,7 +26,7 @@ library(ggplot2)
 library(lattice)
 ```
 
-```{r download/unzip/read, results='hide',cache=TRUE}
+```{r downloadunzipread, results='hide',cache=TRUE}
 
 ## Download, unzip data 
 url <-"https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip"
@@ -71,7 +71,7 @@ g + geom_histogram(bins = 12, na.rm = TRUE,
         theme(plot.title = element_text(hjust = 0.5))
 ```
 
-```{r mean median}
+```{r meanmedian}
 dailysums %>% summarize("mean daily steps" = mean(sumsteps, na.rm = TRUE),
                   "median daily steps" = median(sumsteps, na.rm = TRUE)) %>%
 print.data.frame
@@ -99,13 +99,13 @@ number of steps.
 <br/>
 <br/>
     
-```{r mean steps by interval,results='hide'}
+```{r meanstepsbyinterval,results='hide'}
 meanintsteps <- activity %>% select (interval, steps) %>% group_by(interval) %>%
         summarize("meansteps" = mean(steps, na.rm = TRUE)) 
 ```
 
 
-```{r time series plot}        
+```{r timeseriesplot}        
 ggplot(meanintsteps, aes(interval, meansteps)) + geom_line(aes(color = "blue"),
                                                            show.legend = FALSE) +
         labs(x = "time interval", y = "average steps",
@@ -113,7 +113,7 @@ ggplot(meanintsteps, aes(interval, meansteps)) + geom_line(aes(color = "blue"),
         theme(plot.title = element_text(hjust = 0.5))
 ```  
 
-```{r max interval mean}
+```{r maxintervalmean}
 print.data.frame(filter(meanintsteps, meansteps == max(meansteps)))
 ```
 <br/>
@@ -145,7 +145,7 @@ corresponding to the interval,
 calculates and reports the mean and median total number of steps taken per day.
 
 <br/>
-```{r total nas}
+```{r totalnas}
 datanas<-apply(activity,2,is.na)
 datanasbycol<-apply(datanas,2,sum)
 print(datanasbycol)
@@ -159,7 +159,7 @@ augimpute <- mutate(augactivity,
 activityimpute <- select(augimpute, steps, date, interval)
 ```
 
-```{r show imputes}
+```{r showimputes}
 head(activityimpute, n = 3)
 ```
 
@@ -174,7 +174,7 @@ g + geom_histogram(bins = 12, na.rm = TRUE,
         theme(plot.title = element_text(hjust = 0.5))
 ```
 
-```{r mean median2}
+```{r meanmedian2}
 dailysumsimpute %>% summarize("adjusted mean daily steps" = 
                                       mean(sumsteps, na.rm = TRUE), 
                               "adjusted median daily steps" = 
@@ -220,13 +220,13 @@ activityimputeday <-
 
 
 
-```{r mean steps by interval/daytype}
+```{r meanstepsbyinterval/daytype}
 meanbydayintsteps <- activityimputeday %>% select(daytype, interval, steps) %>% 
         group_by_at(vars(daytype,interval)) %>%
         summarize("meansteps" = mean(steps, na.rm = TRUE)) 
 ```
 
-```{r panel plot}
+```{r panelplot}
 xyplot(meansteps ~ interval | daytype, data = meanbydayintsteps, layout =c(1,2),
        xlab = "time interval", ylab = "average steps", type = "l", col = "blue")
 ```

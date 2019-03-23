@@ -133,7 +133,7 @@ ggplot(meanintsteps, aes(interval, meansteps)) + geom_line(aes(color = "blue"),
         theme(plot.title = element_text(hjust = 0.5))
 ```
 
-![](PA1_template_files/figure-html/time series plot-1.png)<!-- -->
+![](PA1_template_files/figure-html/timeseriesplot-1.png)<!-- -->
 
 
 ```r
@@ -286,7 +286,7 @@ xyplot(meansteps ~ interval | daytype, data = meanbydayintsteps, layout =c(1,2),
        xlab = "time interval", ylab = "average steps", type = "l", col = "blue")
 ```
 
-![](PA1_template_files/figure-html/panel plot-1.png)<!-- -->
+![](PA1_template_files/figure-html/panelplot-1.png)<!-- -->
 
 <br/>
   
