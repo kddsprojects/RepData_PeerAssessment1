@@ -26,7 +26,7 @@ library(ggplot2)
 library(lattice)
 ```
 
-```{r download/unzip/read, cache=TRUE, results='hide'}
+```{r download/unzip/read, results='hide',cache=TRUE}
 
 ## Download, unzip data 
 url <-"https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip"
@@ -38,12 +38,13 @@ unzip(zipfile = "activity.zip")
 activity <-read.csv("activity.csv")
 ```
 
-```{r show dataset,cache=TRUE}
+```{r show dataset}
 head(activity, n = 3)
 ```
 <br/>
 
 #### Processing/transforming the data  
+  
 Notice that the data set is already tidy, so we do not need to process it any 
 further.  
 <br/><br/>  
@@ -59,7 +60,7 @@ daily.
 <br/>
 <br/>
 
-```{r hist,cache=TRUE}
+```{r hist}
 dailysums <- activity %>% select(date, steps) %>% group_by(date) %>% 
         summarize(sumsteps = sum(steps))
 g <- ggplot(dailysums, aes(sumsteps))
@@ -70,7 +71,7 @@ g + geom_histogram(bins = 12, na.rm = TRUE,
         theme(plot.title = element_text(hjust = 0.5))
 ```
 
-```{r mean median,cache=TRUE}
+```{r mean median}
 dailysums %>% summarize("mean daily steps" = mean(sumsteps, na.rm = TRUE),
                   "median daily steps" = median(sumsteps, na.rm = TRUE)) %>%
 print.data.frame
@@ -98,13 +99,13 @@ number of steps.
 <br/>
 <br/>
     
-```{r mean steps by interval,results='hide', cache=TRUE}
+```{r mean steps by interval,results='hide'}
 meanintsteps <- activity %>% select (interval, steps) %>% group_by(interval) %>%
         summarize("meansteps" = mean(steps, na.rm = TRUE)) 
 ```
 
 
-```{r time series plot, cache=TRUE}        
+```{r time series plot}        
 ggplot(meanintsteps, aes(interval, meansteps)) + geom_line(aes(color = "blue"),
                                                            show.legend = FALSE) +
         labs(x = "time interval", y = "average steps",
@@ -112,7 +113,7 @@ ggplot(meanintsteps, aes(interval, meansteps)) + geom_line(aes(color = "blue"),
         theme(plot.title = element_text(hjust = 0.5))
 ```  
 
-```{r max interval mean, cache=TRUE}
+```{r max interval mean}
 print.data.frame(filter(meanintsteps, meansteps == max(meansteps)))
 ```
 <br/>
@@ -131,10 +132,26 @@ time period.
   
   
   
-## Imputing missing values  
+## Imputing missing values    
 <br/>
 
-```{r imputing, results='hide', cache=TRUE}
+The code below: 
+
+- calculates and reports the total number of missing values in the data set,
+- for any missing values, imputes the mean number of steps 
+corresponding to the interval,
+- creates a new data set with the imputed data,
+- generates a histogram of the total number of steps taken each day, and 
+calculates and reports the mean and median total number of steps taken per day.
+
+<br/>
+```{r total nas}
+datanas<-apply(activity,2,is.na)
+datanasbycol<-apply(datanas,2,sum)
+print(datanasbycol)
+```
+
+```{r imputing, results='hide'}
 augactivity <- left_join(activity, meanintsteps, by = "interval") 
 augimpute <- mutate(augactivity, 
        steps = ifelse(is.na(augactivity$steps), augactivity$meansteps, 
@@ -142,13 +159,11 @@ augimpute <- mutate(augactivity,
 activityimpute <- select(augimpute, steps, date, interval)
 ```
 
-
-```{r show imputes, cache=TRUE}
+```{r show imputes}
 head(activityimpute, n = 3)
 ```
 
-
-```{r hist2, cache=TRUE}
+```{r hist2}
 dailysumsimpute <- activityimpute %>% select(date, steps) %>% group_by(date) %>% 
         summarize(sumsteps = sum(steps))
 g <- ggplot(dailysumsimpute, aes(sumsteps))
@@ -172,12 +187,29 @@ Since 1) the NAs were ignored in the original computation of the mean (as
 opposed to being assigned the value '0', for example), and 2) the NAs were 
 uniformly distributed across *all* intervals, imputing the within-interval mean 
 for all NAs in each interval will *not* change the overall mean.  
+Regarding the 
+median, as there were initially several *complete* days with missing values, the 
+imputed values for those days will actually result in a resultant step total 
+equal to the overall mean daily total steps; this is why the median equals 
+the mean.  In this example, if the *location* of the missing values 
+actually differed *within* each day, for example, then this would *not* be the 
+case, however. 
+<br/>
 <br/>
 
 ## Are there differences in activity patterns between weekdays and weekends?  
 <br/>
 
-```{r ,results='hide', cache=TRUE}
+The code below: 
+
+- creates a new factor variable in the data set with two levels corresponding to
+whether a given day is a weekday or a weekend,
+- generates a panel plot containing two time series plots of the average total 
+number of steps across intervals; each time series plot corresponding to
+weekend or weekday data respectively. 
+
+<br/>
+```{r ,results='hide'}
 activityimputeday <- 
         activityimpute %>% 
         mutate(day = weekdays(ymd(date)), 
@@ -192,14 +224,15 @@ activityimputeday <-
 meanbydayintsteps <- activityimputeday %>% select(daytype, interval, steps) %>% 
         group_by_at(vars(daytype,interval)) %>%
         summarize("meansteps" = mean(steps, na.rm = TRUE)) 
-
 ```
 
-```{r panel plot, eval=FALSE, include=FALSE}
+```{r panel plot}
 xyplot(meansteps ~ interval | daytype, data = meanbydayintsteps, layout =c(1,2),
        xlab = "time interval", ylab = "average steps", type = "l", col = "blue")
 ```
+
 <br/>
+  
 Of course, notwithstanding
 
 [1]: https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip "activity.zip"

@@ -53,6 +53,7 @@ head(activity, n = 3)
 <br/>
 
 #### Processing/transforming the data  
+  
 Notice that the data set is already tidy, so we do not need to process it any 
 further.  
 <br/><br/>  
@@ -159,8 +160,30 @@ time period.
   
   
   
-## Imputing missing values  
+## Imputing missing values    
 <br/>
+
+The code below: 
+
+- calculates and reports the total number of missing values in the data set,
+- for any missing values, imputes the mean number of steps 
+corresponding to the interval,
+- creates a new data set with the imputed data,
+- generates a histogram of the total number of steps taken each day, and 
+calculates and reports the mean and median total number of steps taken per day.
+
+<br/>
+
+```r
+datanas<-apply(activity,2,is.na)
+datanasbycol<-apply(datanas,2,sum)
+print(datanasbycol)
+```
+
+```
+##    steps     date interval 
+##     2304        0        0
+```
 
 
 ```r
@@ -170,7 +193,6 @@ augimpute <- mutate(augactivity,
                       augactivity$steps) )
 activityimpute <- select(augimpute, steps, date, interval)
 ```
-
 
 
 ```r
@@ -183,7 +205,6 @@ head(activityimpute, n = 3)
 ## 2 0.3396226 2012-10-01        5
 ## 3 0.1320755 2012-10-01       10
 ```
-
 
 
 ```r
@@ -218,11 +239,28 @@ Since 1) the NAs were ignored in the original computation of the mean (as
 opposed to being assigned the value '0', for example), and 2) the NAs were 
 uniformly distributed across *all* intervals, imputing the within-interval mean 
 for all NAs in each interval will *not* change the overall mean.  
+Regarding the 
+median, as there were initially several *complete* days with missing values, the 
+imputed values for those days will actually result in a resultant step total 
+equal to the overall mean daily total steps; this is why the median equals 
+the mean.  In this example, if the *location* of the missing values 
+actually differed *within* each day, for example, then this would *not* be the 
+case, however. 
+<br/>
 <br/>
 
 ## Are there differences in activity patterns between weekdays and weekends?  
 <br/>
 
+The code below: 
+
+- creates a new factor variable in the data set with two levels corresponding to
+whether a given day is a weekday or a weekend,
+- generates a panel plot containing two time series plots of the average total 
+number of steps across intervals; each time series plot corresponding to
+weekend or weekday data respectively. 
+
+<br/>
 
 ```r
 activityimputeday <- 
@@ -243,7 +281,15 @@ meanbydayintsteps <- activityimputeday %>% select(daytype, interval, steps) %>%
 ```
 
 
+```r
+xyplot(meansteps ~ interval | daytype, data = meanbydayintsteps, layout =c(1,2),
+       xlab = "time interval", ylab = "average steps", type = "l", col = "blue")
+```
+
+![](PA1_template_files/figure-html/panel plot-1.png)<!-- -->
+
 <br/>
+  
 Of course, notwithstanding
 
 [1]: https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip "activity.zip"
