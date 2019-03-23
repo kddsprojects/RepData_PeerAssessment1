@@ -244,7 +244,7 @@ median, as there were initially several *complete* days with missing values, the
 imputed values for those days will actually result in a resultant step total 
 equal to the overall mean daily total steps; this is why the median equals 
 the mean.  In this example, if the *location* of the missing values 
-actually differed *within* each day, for example, then this would *not* be the 
+actually differed *within* each day, say, then this would *not* be the 
 case, however. 
 <br/>
 <br/>

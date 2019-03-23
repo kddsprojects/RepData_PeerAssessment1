@@ -316,7 +316,7 @@ g + geom_histogram(bins = 12, na.rm = TRUE,
 ## 1                  10766.19                    10766.19</code></pre>
 <p><br /></p>
 <p>Since 1) the NAs were ignored in the original computation of the mean (as opposed to being assigned the value ‘0’, for example), and 2) the NAs were uniformly distributed across <em>all</em> intervals, imputing the within-interval mean for all NAs in each interval will <em>not</em> change the overall mean.<br />
-Regarding the median, as there were initially several <em>complete</em> days with missing values, the imputed values for those days will actually result in a resultant step total equal to the overall mean daily total steps; this is why the median equals the mean. In this example, if the <em>location</em> of the missing values actually differed <em>within</em> each day, for example, then this would <em>not</em> be the case, however. <br /> <br /></p>
+Regarding the median, as there were initially several <em>complete</em> days with missing values, the imputed values for those days will actually result in a resultant step total equal to the overall mean daily total steps; this is why the median equals the mean. In this example, if the <em>location</em> of the missing values actually differed <em>within</em> each day, say, then this would <em>not</em> be the case, however. <br /> <br /></p>
 </div>
 <div id="are-there-differences-in-activity-patterns-between-weekdays-and-weekends" class="section level2">
 <h2>Are there differences in activity patterns between weekdays and weekends?</h2>
