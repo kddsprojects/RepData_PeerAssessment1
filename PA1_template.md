@@ -15,15 +15,16 @@ Then we read it into R.  For the following analyses, it is presupposed that the
 R packages ```lubridate```, ```dplyr```, ```ggplot2```, ```lattice``` are 
 already installed. 
 
-```{r packages, message=FALSE}
+
+```r
 library(lubridate)
 library(dplyr)
 library(ggplot2)
 library(lattice)
 ```
 
-```{r download/unzip/read, cache=TRUE, results='hide'}
 
+```r
 ## Download, unzip data 
 url <-"https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip"
 download.file(url,
@@ -34,8 +35,16 @@ unzip(zipfile = "activity.zip")
 activity <-read.csv("activity.csv")
 ```
 
-```{r show dataset,cache=TRUE}
+
+```r
 head(activity, n = 3)
+```
+
+```
+##   steps       date interval
+## 1    NA 2012-10-01        0
+## 2    NA 2012-10-01        5
+## 3    NA 2012-10-01       10
 ```
 Notice that the data set is already tidy, so we do not need to process it any 
 further.  
@@ -49,7 +58,8 @@ The code below:
 - generates a **histogram** of the total number of steps taken for each day,  
 - calculates and reports the **mean** and **median** total number of steps taken daily.  
 
-```{r hist,cache=TRUE}
+
+```r
 dailysums <- activity %>% select(date, steps) %>% group_by(date) %>% 
         summarize(sumsteps = sum(steps))
 g <- ggplot(dailysums, aes(sumsteps))
@@ -60,10 +70,18 @@ g + geom_histogram(bins = 12, na.rm = TRUE,
         theme(plot.title = element_text(hjust = 0.5))
 ```
 
-```{r mean median,cache=TRUE}
+![](PA1_template_files/figure-html/hist-1.png)<!-- -->
+
+
+```r
 dailysums %>% summarize("mean daily steps" = mean(sumsteps, na.rm = TRUE),
                   "median daily steps" = median(sumsteps, na.rm = TRUE)) %>%
 print.data.frame
+```
+
+```
+##   mean daily steps median daily steps
+## 1         10766.19              10765
 ```
   
   
@@ -71,28 +89,39 @@ print.data.frame
 ## What is the average daily activity pattern?  
   
     
-```{r mean steps by interval,results='hide', cache=TRUE}
+
+```r
 meanintsteps <- activity %>% select (interval, steps) %>% group_by(interval) %>%
         summarize("meansteps" = mean(steps, na.rm = TRUE)) 
 ```
 
 
-```{r time series plot, cache=TRUE}        
+
+```r
 ggplot(meanintsteps, aes(interval, meansteps)) + geom_line(aes(color = "blue"),
                                                            show.legend = FALSE) +
         labs(x = "time interval", y = "average steps",
              title = "Average Number of Steps across Time") +
         theme(plot.title = element_text(hjust = 0.5))
-```  
+```
 
-```{r max interval mean, cache=TRUE}
+![](PA1_template_files/figure-html/time series plot-1.png)<!-- -->
+
+
+```r
 print.data.frame(filter(meanintsteps, meansteps == max(meansteps)))
+```
+
+```
+##   interval meansteps
+## 1      835  206.1698
 ```
   
   
   
 ## Imputing missing values  
-```{r imputing, results='hide', cache=TRUE}
+
+```r
 augactivity <- left_join(activity, meanintsteps, by = "interval") 
 augimpute <- mutate(augactivity, 
        steps = ifelse(is.na(augactivity$steps), augactivity$meansteps, 
@@ -101,12 +130,21 @@ activityimpute <- select(augimpute, steps, date, interval)
 ```
 
 
-```{r show imputes, cache=TRUE}
+
+```r
 head(activityimpute, n = 3)
 ```
 
+```
+##       steps       date interval
+## 1 1.7169811 2012-10-01        0
+## 2 0.3396226 2012-10-01        5
+## 3 0.1320755 2012-10-01       10
+```
 
-```{r hist2, cache=TRUE}
+
+
+```r
 dailysumsimpute <- activityimpute %>% select(date, steps) %>% group_by(date) %>% 
         summarize(sumsteps = sum(steps))
 g <- ggplot(dailysumsimpute, aes(sumsteps))
@@ -117,11 +155,19 @@ g + geom_histogram(bins = 12, na.rm = TRUE,
         theme(plot.title = element_text(hjust = 0.5))
 ```
 
-```{r mean median2}
+![](PA1_template_files/figure-html/hist2-1.png)<!-- -->
+
+
+```r
 dailysumsimpute %>% summarize("adjusted mean daily steps" = 
                                       mean(sumsteps, na.rm = TRUE), 
                               "adjusted median daily steps" = 
                                       median(sumsteps, na.rm = TRUE)) %>% print.data.frame
+```
+
+```
+##   adjusted mean daily steps adjusted median daily steps
+## 1                  10766.19                    10766.19
 ```
 
 
@@ -134,7 +180,8 @@ for all NAs in each interval will *not* change the overall mean.
   
 ## Are there differences in activity patterns between weekdays and weekends?
 
-```{r ,results='hide', cache=TRUE}
+
+```r
 activityimputeday <- 
         activityimpute %>% 
         mutate(day = weekdays(ymd(date)), 
@@ -145,17 +192,14 @@ activityimputeday <-
 
 
 
-```{r mean steps by interval/daytype}
+
+```r
 meanbydayintsteps <- activityimputeday %>% select(daytype, interval, steps) %>% 
         group_by_at(vars(daytype,interval)) %>%
         summarize("meansteps" = mean(steps, na.rm = TRUE)) 
-
 ```
 
-```{r panel plot, eval=FALSE, include=FALSE}
-xyplot(meansteps ~ interval | daytype, data = meanbydayintsteps, layout=c(1,2),
-       xlab = "time interval", ylab = "average steps", type="l",col="blue")
-```
+
 
 [1]: https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip "activity.zip"
 
