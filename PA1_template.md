@@ -1,19 +1,23 @@
 ---
 title: "Reproducible Research: Course Project 1"
+author: "KD"
 output: 
   html_document:
     keep_md: true
 ---
-
-
-## Loading and preprocessing the data  
   
-   
+
+## Loading and preprocessing the data
+<br/>
+  
+#### Loading the data
 First, we download and unzip the following file into the user's working 
 directory: [activity.zip][1]  
 Then we read it into R.  For the following analyses, it is presupposed that the 
 R packages ```lubridate```, ```dplyr```, ```ggplot2```, ```lattice``` are 
 already installed. 
+<br/>
+<br/>
 
 
 ```r
@@ -46,17 +50,23 @@ head(activity, n = 3)
 ## 2    NA 2012-10-01        5
 ## 3    NA 2012-10-01       10
 ```
+<br/>
+
+#### Processing/transforming the data  
 Notice that the data set is already tidy, so we do not need to process it any 
 further.  
-  
-  
+<br/><br/>  
     
 ## What is mean total number of steps taken per day?  
+<br/>
 The code below: 
 
 - calculates the total number of steps taken for each day,  
 - generates a **histogram** of the total number of steps taken for each day,  
-- calculates and reports the **mean** and **median** total number of steps taken daily.  
+- calculates and reports the **mean** and **median** total number of steps taken 
+daily.  
+<br/>
+<br/>
 
 
 ```r
@@ -83,11 +93,28 @@ print.data.frame
 ##   mean daily steps median daily steps
 ## 1         10766.19              10765
 ```
+<br/>
+Visually inspecting the histogram, we see that the 
+total daily step count corresponding to this data set appear to be somewhat 
+left-skewed. However, the mean and median daily step totals are virtually 
+identical, probably due to the two unusually large step totals in the right tail "counterbalancing" the left skew, in what is not a particularly large dataset.
+<br/>
+<br/>
+
   
   
-  
-## What is the average daily activity pattern?  
-  
+## What is the average daily activity pattern?   
+<br/>
+The code below: 
+
+- calculates the mean number of steps taken for each interval value, averaged 
+across all days,
+- generates a **time series plot** of the interval value versus the mean number 
+of steps taken for that interval,  
+- calculates and reports the specific interval that has the **maximum** mean 
+number of steps.  
+<br/>
+<br/>
     
 
 ```r
@@ -116,10 +143,25 @@ print.data.frame(filter(meanintsteps, meansteps == max(meansteps)))
 ##   interval meansteps
 ## 1      835  206.1698
 ```
+<br/>
+The time series plot has several interesting features, of which we will mention 
+two.  Immediately noticeable is that the average steps is essentially zero for 
+the first 500-odd intervals. In the context of the data, this makes sense, as 
+those intervals almost certainly would correspond to the times when the person 
+in the study were asleep.  
+In addition, there is a noticeable spike in the average number of steps, 
+occurring approximately between the intervals 800 and 900.  More specifically, 
+the interval equal to 835 has the largest average number of steps.
+One potential explanation is that the person exercises in the aforementioned 
+time period.
+<br/>
+<br/>
   
   
   
 ## Imputing missing values  
+<br/>
+
 
 ```r
 augactivity <- left_join(activity, meanintsteps, by = "interval") 
@@ -170,15 +212,16 @@ dailysumsimpute %>% summarize("adjusted mean daily steps" =
 ## 1                  10766.19                    10766.19
 ```
 
+<br/>
 
 Since 1) the NAs were ignored in the original computation of the mean (as 
 opposed to being assigned the value '0', for example), and 2) the NAs were 
 uniformly distributed across *all* intervals, imputing the within-interval mean 
 for all NAs in each interval will *not* change the overall mean.  
-  
-  
-  
-## Are there differences in activity patterns between weekdays and weekends?
+<br/>
+
+## Are there differences in activity patterns between weekdays and weekends?  
+<br/>
 
 
 ```r
@@ -200,7 +243,8 @@ meanbydayintsteps <- activityimputeday %>% select(daytype, interval, steps) %>%
 ```
 
 
+<br/>
+Of course, notwithstanding
 
 [1]: https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip "activity.zip"
 
-Of course, notwithstanding
